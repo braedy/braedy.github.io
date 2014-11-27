@@ -16,7 +16,7 @@ www.typeandgrids.com
 -->
 
 <title>Brady Ledger &mdash; Shadow Mapping</title>
-<meta name="description" content=shadow detail view">
+<meta name="description" content=glsl detail view">
 <meta name="author" content="Brady Ledger">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -77,11 +77,8 @@ www.typeandgrids.com
 
 		<div id="detailViewImages">
 
-			<video id="pongFeatures" width="940" preload controls>
-				<source src="images/shadow.mp4" />
-			</video>
-			<p><strong></strong></p>
-
+			<img src="images/term.png" alt="Development environment" />
+			<p><strong>Development environment</strong></p>
 			<hr />
 
 			<ul>
@@ -89,19 +86,41 @@ www.typeandgrids.com
 				<li><strong>Course:</strong> Computer Graphics / Datorgrafik<br/>@ Uppsala University, Sweden</li>
 				<li><strong>Year:</strong> Spring 2014</li>
 			</ul>
-			<p align=left><br/>This mini-project was examinable and heavily weighted.<br/>
-				 Requirements involved a demonstration and discussion of the code, submission of the video above, and a one-page-double-column abstract on the rendering problem chosen (which you can find below).<br/><br/>
-				 Combined with three other tasked projects, and a 39,5/40 written exam, the work here contributed to the maximum grade for the 10 ECTS credit course.
 
+			<p align=left>Listed here are some of the results I've produced working with OpenGL
+				and GLSL during the course in Computer Graphics at Uppsala.<br/><br/>
+				Problems rendered started from simple Lambertian model diffuse shading, transformations, and alpha blending to Blinn-Phong shading, implementation of skyboxes
+				and shading via environmental mapping.<br/><br/>
+				Combined with a maximum score for the <a href="../shadow_mapping/index.html">shadow-mapping mini-project</a>,
+				and a 39,5/40 written exam, the work here contributed to the maximum grade for the 10 ECTS credit course.
+			</p>
 
-			</p><br/>
-			<a href="images/assignment4.tar.gz"><p align=left><strong>Download project archive</strong></a><br/>
-			<p align=left>Be sure to read the README file found in /assignment4/part1/</p>
 
 			<hr />
 
-			<embed src="images/project_report.pdf" width="900" height="600" alt="Project Report" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
-      <p><strong>Project Report</strong></p>
+			<img src="images/rabbit.png" alt="Rabbit rendered with tweakable Phong shading" />
+			<p><strong>Rabbit rendered with tweakable Blinn-Phong shading</strong></p>
+			<p align=left>Computing Blinn-Phong shading in GLSL vertex and fragment shaders with dynamic variables (configurable through an AntTweakBar).</p>
+
+			<p><strong></strong></p>
+
+			<hr />
+
+			<img src="images/church.png" alt="Gargoyle rendered with environmental shading" />
+			<p><strong>Gargoyle rendered with environmental shading</strong></p>
+			<p align=left>To render a reflective/refractive surface required compution of the reflection vector in the fragment shader.
+			This was used as a 3D texture co-ordinate to fetch the incoming light (RGB colour) from the skybox cube map.</p>
+
+
+			<hr />
+
+			<img src="images/forest.png" alt="Armadillo rendered with environmental shading" />
+			<p><strong>Armadillo rendered with environmental shading and specular smoothing filter</strong></p>
+			<p align=left>Standard mapping produces perfectly smooth, mirror-like surfaces.
+			Pre-filtering the cube map with a smoothing filter based on the specular power of the Blinn-Phong shading model
+			simulates roughness or gloss to the surface. Switching between the filters has been implemented via assigned keys.</p>
+
+
 		</div>
 
 		<hr />
