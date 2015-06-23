@@ -1,0 +1,144 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+
+	<!--
+	••••••••••••••••••••••••
+
+	Powered by Type & Grids™
+	www.typeandgrids.com
+
+	••••••••••••••••••••••••
+-->
+
+<title>Brady Ledger &mdash; Parallelism</title>
+<meta name="description" content=opencl detail view">
+<meta name="author" content="Brady Ledger">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+	================================================================================================= -->
+	<link rel="stylesheet" href="../../css/base.css">
+	<link rel="stylesheet" href="../../css/themes/type_04.css">
+	<link rel="stylesheet" href="../../css/themes/color_05.css">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+<!-- Favicons
+	============================================================================================= -->
+	<link rel="shortcut icon" href="../../images/favicons/favicon.ico">
+	<link rel="apple-touch-icon" href="../../images/favicons/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="../../images/favicons/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="../../images/favicons/apple-touch-icon-114x114.png">
+
+<!-- JS
+	================================================================================================= -->
+	<script src="../../js/libs/modernizr.min.js"></script>
+	<script src="../../js/libs/jquery-1.8.3.min.js"></script>
+	<script src="../../js/libs/jquery.easing.1.3.min.js"></script>
+	<script src="../../js/libs/jquery.fitvids.js"></script>
+	<script src="../../js/script.js"></script>
+
+</head>
+<body>
+
+	<!-- Write preloader to page - this allows the site to load for users with JS disabled -->
+	<script type="text/javascript">
+		document.write("<div id='sitePreloader'><div id='preloaderImage'><img src='../../images/site_preloader.gif' alt='Preloader' /></div></div>");
+	</script>
+
+	<div class="container">
+
+		<!-- Header begins ========================================================================== -->
+		<header class="sixteen columns">
+			<div id="logo">
+				<h1>Brady Ledger</h1>
+				<h2>MSc Computer Science student based in Uppsala, Sweden</h2>
+				<!--
+				<img src="images/logo.png" width="275" height="35" alt="Logo" />
+			-->
+		</div>
+		<nav>
+			<ul>
+				<li><a href="../../index.html">&laquo; Back</a></li>
+			</ul>
+		</nav>
+		<hr />
+	</header>
+	<!-- Header ends ============================================================================ -->
+
+	<div id="detailView" class="sixteen columns" >
+
+		<div id="detailViewImages">
+			<img src="images/demo_small.jpg" alt="screen of pedestrian simulator in action" />
+			<p><strong>PedSim</strong>
+				The visual output showing two groups of pedestrians moving towards contrasting destinations.
+				<br/>Calculations on movement are performed through different algorithms using the parallel frameworks.</p>
+
+			<hr />
+			<ul>
+				<li><strong>Technologies:</strong> C++, OpenCL, SIMD / AVX, OpenMP, Pthreads</li>
+				<li><strong>Course:</strong> Low-Level Parallel Programming / Lågniva-parallellprogrammering<br/>@ Uppsala University, Sweden</li>
+				<li><strong>Role:</strong> Programmer</li>
+				<li><strong>Year:</strong> Spring 2015</li>
+			</ul>
+			<p align=left>This project involved refactoring an existing pedestrian simulation implementation from an open-source library (<a href="http://pedsim.silmaril.org">PedSim</a>).<br/>
+				Refactoring was performed to parallelise the math behind moving each individual (agent) towards its destination.
+				Work focussed on constructing parallel algorithms for the new programming frameworks, identify sections for parallelism and the factors and dependencies affecting its implementation.
+			</p>
+			<p align=left>I took on the implementation of the OpenCL implementation personally.
+				Due to time constraints a mere basic version was created for submission, but later I went back to see if I could get it working to the level I know it could produce.
+				I focussed namely on how memory was managed between the host and the device.
+				Enqueuing commands to buffers with pointers turned out to be massively faster than allocating buffer reads and writes each pedestrian step cycle.<br/><br/>
+
+				In addition, we exposed data parallelism through refactorisation of the code, this was especially advantageous for GPU computing and SIMD.
+				Agents in the AVX/OpenCL implementation are structured in a struct of arrays, which contributed to a vast improvement of speed against the Pthread and OpenMP implementations.
+				Each processor performs the same task on different data in parallel.
+				Vectors are passed to the processor where it runs tasks in parallel over different pieces of distributed data.
+			</p>
+			<br/><br/>
+			<p align=left>NB: I might put some code snippets up soon, perhaps also some callgraphs and runtimes. (2015/6/23)</p>
+			<!-- <p align=left>Link to some code maybe</p>
+			<a href=""><p align=left><strong>Link</strong></a><br/>
+
+				<hr />
+
+				<img src="" alt="code snippet" />
+				<p><strong>Explanation</strong></p>
+
+				<hr />
+
+				<img src="" alt="code snippet" />
+				<p><strong>Explanation</strong></p> -->
+			</div>
+
+			<hr />
+
+			<div id="detailViewBack">
+				<a href="../../index.html">&laquo; Back</a>
+			</div>
+
+		</div>
+
+		<!-- Footer begins ========================================================================== -->
+		<footer class="sixteen columns">
+			<hr />
+			<ul id="footerLinks">
+				<li>&copy; 2015 Brady Ledger. All rights reserved.</li>
+				<li><a href="mailto:bledger@acm.org">bledger@acm.org</a></li>
+				<li><a href="http://www.twitter.com/hejbrady" target="_blank">Twitter</a></li>
+				<!--Notice: The "Powered by Type & Grids" link in the footer is required in the Free version. Upgrade to the Pro version if you would like to remove it. (www.typeandgrids.me/pirates) -->
+				<li>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a></li>
+			</ul>
+		</footer>
+		<!-- Footer ends ============================================================================ -->
+
+	</div><!-- container -->
+</body>
+</html>
