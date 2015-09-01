@@ -1,0 +1,381 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+
+	<!--
+	••••••••••••••••••••••••
+
+	Powered by Type & Grids™
+	www.typeandgrids.com
+
+	••••••••••••••••••••••••
+-->
+
+<title>Brady Ledger &mdash; GPGPU CUDA</title>
+<meta name="description" content=opencl detail view">
+<meta name="author" content="Brady Ledger">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+	================================================================================================= -->
+	<link rel="stylesheet" href="../../css/base.css">
+	<link rel="stylesheet" href="../../css/themes/type_04.css">
+	<link rel="stylesheet" href="../../css/themes/color_05.css">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+<!-- Favicons
+	============================================================================================= -->
+	<link rel="shortcut icon" href="../../images/favicons/favicon.ico">
+	<link rel="apple-touch-icon" href="../../images/favicons/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="../../images/favicons/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="../../images/favicons/apple-touch-icon-114x114.png">
+
+<!-- JS
+	================================================================================================= -->
+	<script src="../../js/libs/modernizr.min.js"></script>
+	<script src="../../js/libs/jquery-1.8.3.min.js"></script>
+	<script src="../../js/libs/jquery.easing.1.3.min.js"></script>
+	<script src="../../js/libs/jquery.fitvids.js"></script>
+	<script src="../../js/script.js"></script>
+</head>
+<body>
+
+	<!-- Write preloader to page - this allows the site to load for users with JS disabled -->
+	<script type="text/javascript">
+		document.write("<div id='sitePreloader'><div id='preloaderImage'><img src='../../images/site_preloader.gif' alt='Preloader' /></div></div>");
+	</script>
+
+	<div class="container">
+
+		<!-- Header begins ========================================================================== -->
+		<header class="sixteen columns">
+			<div id="logo">
+				<h1>Brady Ledger</h1>
+				<h2>MSc Computer Science student based in Uppsala, Sweden</h2>
+				<!--
+				<img src="images/logo.png" width="275" height="35" alt="Logo" />
+			-->
+		</div>
+		<nav>
+			<ul>
+				<li><a href="../../index.html">&laquo; Back</a></li>
+			</ul>
+		</nav>
+		<hr />
+	</header>
+	<!-- Header ends ============================================================================ -->
+
+	<div id="detailView" class="sixteen columns" >
+
+		<div id="detailViewImages">
+			<p>This page reflects upon the continuing work and projects I undertake during the Udacity course on parallel programming written by NVIDIA.
+				<hr />
+			<ul>
+				<li><strong>Technologies:</strong> C++, NVIDIA CUDA</li>
+				<li><strong>Course:</strong> <a href="https://developer.nvidia.com/udacity-cs344-intro-parallel-programming" target="_blank">Intro to Parallel Programming</a></li>
+				<li><strong>Year:</strong> Summer 2015</li>
+			</ul>
+
+			<p align=left>Kernels are written for image processing, making use of 2D kernel block and grid layouts.
+				<br/>The code is executed through Udacity's portal due to not currently having access to a cuda-capable device.
+				<br/>All source material is provided, including results/outputs.</p>
+			</p>
+			<hr/>
+			<p align=left><strong>Grayscale conversion image kernel.</strong>
+				<a href="unit1.zip" target="_blank">Source with wrapper</a>
+				<!-- HTML generated using hilite.me --><div align=left style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+
+				<pre style="margin: 0; line-height: 125%"><span style="color: #557799">#include &quot;reference_calc.cpp&quot;</span>
+<span style="color: #557799">#include &quot;utils.h&quot;</span>
+<span style="color: #557799">#include &lt;stdio.h&gt;</span>
+
+<span style="color: #008800; font-weight: bold">__global__</span>
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">rgba_to_greyscale</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">uchar4</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> rgbaImage,
+                       <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> greyImage,
+                       <span style="color: #333399; font-weight: bold">int</span> numRows, <span style="color: #333399; font-weight: bold">int</span> numCols)
+{
+  <span style="color: #888888">//create a mapping from the 2D block and grid locations</span>
+  <span style="color: #888888">//to an absolute 2D location in the image, then use that to</span>
+  <span style="color: #888888">//calculate a 1D offset</span>
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int2</span> thread_2D_pos <span style="color: #333333">=</span> make_int2( <span style="color: #007020">blockIdx</span>.x <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.x <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.x,
+                                        <span style="color: #007020">blockIdx</span>.y <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.y <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.y);
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> thread_1D_pos <span style="color: #333333">=</span> thread_2D_pos.y <span style="color: #333333">*</span> numCols <span style="color: #333333">+</span> thread_2D_pos.x;
+
+  <span style="color: #888888">//convert from color to greyscale (ignore alpha)</span>
+  <span style="color: #888888">//mapping from components of a uchar4 to RGBA are:</span>
+  <span style="color: #888888">//.x -&gt; R ; .y -&gt; G ; .z -&gt; B ; .w -&gt; A;</span>
+
+  <span style="color: #333399; font-weight: bold">uchar4</span> rgba <span style="color: #333333">=</span> rgbaImage[thread_1D_pos];
+  <span style="color: #888888">//The output (greyImage) at each pixel should be the result of</span>
+  <span style="color: #888888">//applying the formula: output = .299f * R + .587f * G + .114f * B;</span>
+  <span style="color: #333399; font-weight: bold">float</span> channelSum <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">.299f</span> <span style="color: #333333">*</span> rgba.x <span style="color: #333333">+</span> <span style="color: #6600EE; font-weight: bold">.587f</span> <span style="color: #333333">*</span> rgba.y <span style="color: #333333">+</span> <span style="color: #6600EE; font-weight: bold">.114f</span> <span style="color: #333333">*</span> rgba.z;
+  greyImage[thread_1D_pos] <span style="color: #333333">=</span> channelSum;
+}
+
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">your_rgba_to_greyscale</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">uchar4</span> <span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> h_rgbaImage,
+                            <span style="color: #333399; font-weight: bold">uchar4</span> <span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> d_rgbaImage,
+                            <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> d_greyImage,
+                            <span style="color: #333399; font-weight: bold">size_t</span> numRows,
+                            <span style="color: #333399; font-weight: bold">size_t</span> numCols)
+{
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">dim3</span> blockSize(<span style="color: #0000DD; font-weight: bold">16</span>, <span style="color: #0000DD; font-weight: bold">16</span>);
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">dim3</span> gridSize((numCols <span style="color: #333333">+</span> blockSize.x <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">/</span>blockSize.x,
+                      (numRows <span style="color: #333333">+</span> blockSize.y <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">/</span>blockSize.y);
+  <span style="color: #888888">//launch kernel</span>
+  rgba_to_greyscale<span style="color: #333333">&lt;&lt;&lt;</span>gridSize, blockSize<span style="color: #333333">&gt;&gt;&gt;</span>(d_rgbaImage,
+                                             d_greyImage,
+                                             numRows,
+                                             numCols);
+
+  cudaDeviceSynchronize(); checkCudaErrors(cudaGetLastError());
+}
+</pre></div>
+<br/>
+<img src="images/unit1.jpg" alt="timing and result" />
+</p>
+<hr />
+<br/>
+			<p align=left><strong>Gaussian blur image kernel, with channel division.</strong>
+				 <a href="unit2.zip" target="_blank">Source with wrapper</a>
+				 <br/>*subject to improvement with shared memory.
+
+				 <!-- HTML generated using hilite.me --><div align=left style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">#include &quot;reference_calc.cpp&quot;</span>
+<span style="color: #557799">#include &quot;utils.h&quot;</span>
+
+<span style="color: #008800; font-weight: bold">__global__</span>
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">gaussian_blur</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> inputChannel,
+                   <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> outputChannel,
+                   <span style="color: #333399; font-weight: bold">int</span> numRows, <span style="color: #333399; font-weight: bold">int</span> numCols,
+                   <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">float</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> filter, <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> filterWidth)
+{
+  <span style="color: #888888">// compute any intermediate results in floating point</span>
+  <span style="color: #333399; font-weight: bold">float</span> result <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.f</span>;
+  <span style="color: #888888">// get positions</span>
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int2</span> thread_2D_pos <span style="color: #333333">=</span> make_int2( <span style="color: #007020">blockIdx</span>.x <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.x <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.x,
+                                        <span style="color: #007020">blockIdx</span>.y <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.y <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.y);
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> thread_1D_pos <span style="color: #333333">=</span> thread_2D_pos.y <span style="color: #333333">*</span> numCols <span style="color: #333333">+</span> thread_2D_pos.x;
+
+  <span style="color: #888888">// handle OOBs</span>
+  <span style="color: #008800; font-weight: bold">if</span>((thread_2D_pos.x <span style="color: #333333">&lt;</span> numCols) <span style="color: #333333">&amp;&amp;</span> (thread_2D_pos.y <span style="color: #333333">&lt;</span> numRows))
+    {
+        <span style="color: #888888">// square filter</span>
+        <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> filter_offset <span style="color: #333333">=</span> filterWidth<span style="color: #333333">/</span><span style="color: #0000DD; font-weight: bold">2</span>;
+        <span style="color: #888888">// sum the window pixels</span>
+        <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #333333">-</span>filter_offset; i <span style="color: #333333">&lt;=</span> filter_offset; i<span style="color: #333333">++</span>)
+        {
+            <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> j <span style="color: #333333">=</span> <span style="color: #333333">-</span>filter_offset; j <span style="color: #333333">&lt;=</span> filter_offset; j<span style="color: #333333">++</span>)
+            {
+                <span style="color: #888888">// clamp for out of range access</span>
+                <span style="color: #333399; font-weight: bold">int</span> clamped_i <span style="color: #333333">=</span> min(max(thread_2D_pos.y <span style="color: #333333">+</span> i, <span style="color: #0000DD; font-weight: bold">0</span>), static_cast<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">int</span><span style="color: #333333">&gt;</span>(numRows <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>));
+                <span style="color: #333399; font-weight: bold">int</span> clamped_j <span style="color: #333333">=</span> min(max(thread_2D_pos.x <span style="color: #333333">+</span> j, <span style="color: #0000DD; font-weight: bold">0</span>), static_cast<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">int</span><span style="color: #333333">&gt;</span>(numCols <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>));
+                <span style="color: #888888">//clamp(i, 0, numRows-1); clamp(j, 0, numCols-1); //Cg</span>
+                <span style="color: #888888">// result += tex2D(tex8u,thread_2D_pos.y + i, thread_2D_pos.x + j); // tex2D option</span>
+                <span style="color: #333399; font-weight: bold">float</span> image_value <span style="color: #333333">=</span> static_cast<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">float</span><span style="color: #333333">&gt;</span>(inputChannel[clamped_i <span style="color: #333333">*</span> numCols <span style="color: #333333">+</span> clamped_j]);
+                <span style="color: #333399; font-weight: bold">float</span> filter_value <span style="color: #333333">=</span> filter[(i <span style="color: #333333">+</span> filter_offset) <span style="color: #333333">*</span> filterWidth <span style="color: #333333">+</span> j <span style="color: #333333">+</span> filter_offset];
+                result <span style="color: #333333">+=</span> image_value <span style="color: #333333">*</span> filter_value;
+            }
+        }
+    <span style="color: #888888">// store final result as unsigned char</span>
+    outputChannel[thread_1D_pos] <span style="color: #333333">=</span> static_cast<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">&gt;</span>(result);
+    }
+}
+
+<span style="color: #888888">//This kernel takes in an image represented as a uchar4 and splits</span>
+<span style="color: #888888">//it into three images consisting of only one color channel each</span>
+<span style="color: #008800; font-weight: bold">__global__</span>
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">separateChannels</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">uchar4</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> inputImageRGBA,
+                      <span style="color: #333399; font-weight: bold">int</span> numRows,
+                      <span style="color: #333399; font-weight: bold">int</span> numCols,
+                      <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> redChannel,
+                      <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> greenChannel,
+                      <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> blueChannel)
+{
+  <span style="color: #888888">//position</span>
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int2</span> thread_2D_pos <span style="color: #333333">=</span> make_int2( <span style="color: #007020">blockIdx</span>.x <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.x <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.x,
+                                        <span style="color: #007020">blockIdx</span>.y <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.y <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.y);
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> thread_1D_pos <span style="color: #333333">=</span> thread_2D_pos.y <span style="color: #333333">*</span> numCols <span style="color: #333333">+</span> thread_2D_pos.x;
+  <span style="color: #888888">//OOB</span>
+  <span style="color: #008800; font-weight: bold">if</span> (thread_2D_pos.x <span style="color: #333333">&gt;=</span> numCols <span style="color: #333333">||</span> thread_2D_pos.y <span style="color: #333333">&gt;=</span> numRows)
+    <span style="color: #008800; font-weight: bold">return</span>;
+
+  redChannel[thread_1D_pos] <span style="color: #333333">=</span> inputImageRGBA[thread_1D_pos].x;
+  greenChannel[thread_1D_pos] <span style="color: #333333">=</span> inputImageRGBA[thread_1D_pos].y;
+  blueChannel[thread_1D_pos] <span style="color: #333333">=</span> inputImageRGBA[thread_1D_pos].z;
+}
+
+<span style="color: #888888">//This kernel takes in three color channels and recombines them</span>
+<span style="color: #888888">//into one image.  The alpha channel is set to 255 to represent</span>
+<span style="color: #888888">//that this image has no transparency.</span>
+<span style="color: #008800; font-weight: bold">__global__</span>
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">recombineChannels</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> redChannel,
+                       <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> greenChannel,
+                       <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> blueChannel,
+                       <span style="color: #333399; font-weight: bold">uchar4</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> outputImageRGBA,
+                       <span style="color: #333399; font-weight: bold">int</span> numRows,
+                       <span style="color: #333399; font-weight: bold">int</span> numCols)
+{
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int2</span> thread_2D_pos <span style="color: #333333">=</span> make_int2( <span style="color: #007020">blockIdx</span>.x <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.x <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.x,
+                                        <span style="color: #007020">blockIdx</span>.y <span style="color: #333333">*</span> <span style="color: #007020">blockDim</span>.y <span style="color: #333333">+</span> <span style="color: #007020">threadIdx</span>.y);
+
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> thread_1D_pos <span style="color: #333333">=</span> thread_2D_pos.y <span style="color: #333333">*</span> numCols <span style="color: #333333">+</span> thread_2D_pos.x;
+
+  <span style="color: #888888">//make sure we don&#39;t try and access memory outside the image</span>
+  <span style="color: #888888">//by having any threads mapped there return early</span>
+  <span style="color: #008800; font-weight: bold">if</span> (thread_2D_pos.x <span style="color: #333333">&gt;=</span> numCols <span style="color: #333333">||</span> thread_2D_pos.y <span style="color: #333333">&gt;=</span> numRows)
+    <span style="color: #008800; font-weight: bold">return</span>;
+
+  <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> red   <span style="color: #333333">=</span> redChannel[thread_1D_pos];
+  <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> green <span style="color: #333333">=</span> greenChannel[thread_1D_pos];
+  <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> blue  <span style="color: #333333">=</span> blueChannel[thread_1D_pos];
+
+  <span style="color: #888888">//alpha should be 255 for no transparency</span>
+  <span style="color: #333399; font-weight: bold">uchar4</span> outputPixel <span style="color: #333333">=</span> make_uchar4(red, green, blue, <span style="color: #0000DD; font-weight: bold">255</span>);
+  <span style="color: #888888">//store in output image</span>
+  outputImageRGBA[thread_1D_pos] <span style="color: #333333">=</span> outputPixel;
+}
+
+<span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> <span style="color: #333333">*</span>d_red, <span style="color: #333333">*</span>d_green, <span style="color: #333333">*</span>d_blue;
+<span style="color: #333399; font-weight: bold">float</span>         <span style="color: #333333">*</span>d_filter;
+
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">allocateMemoryAndCopyToGPU</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">size_t</span> numRowsImage, <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">size_t</span> numColsImage,
+                                <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">float</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> h_filter, <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">size_t</span> filterWidth)
+{
+
+  <span style="color: #888888">//allocate memory for the three different channels</span>
+  <span style="color: #888888">//original</span>
+  checkCudaErrors(cudaMalloc(<span style="color: #333333">&amp;</span>d_red,   <span style="color: #008800; font-weight: bold">sizeof</span>(<span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span>) <span style="color: #333333">*</span> numRowsImage <span style="color: #333333">*</span> numColsImage));
+  checkCudaErrors(cudaMalloc(<span style="color: #333333">&amp;</span>d_green, <span style="color: #008800; font-weight: bold">sizeof</span>(<span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span>) <span style="color: #333333">*</span> numRowsImage <span style="color: #333333">*</span> numColsImage));
+  checkCudaErrors(cudaMalloc(<span style="color: #333333">&amp;</span>d_blue,  <span style="color: #008800; font-weight: bold">sizeof</span>(<span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span>) <span style="color: #333333">*</span> numRowsImage <span style="color: #333333">*</span> numColsImage));
+
+  <span style="color: #888888">//allocate memory for the filter on the GPU</span>
+  checkCudaErrors(cudaMalloc(<span style="color: #333333">&amp;</span>d_filter, <span style="color: #008800; font-weight: bold">sizeof</span>(<span style="color: #333399; font-weight: bold">float</span>) <span style="color: #333333">*</span> filterWidth <span style="color: #333333">*</span> filterWidth));
+
+  <span style="color: #888888">//Copy the filter on the host (h_filter) to the memory just allocated</span>
+  checkCudaErrors(cudaMemcpy(d_filter,
+               h_filter,
+               <span style="color: #008800; font-weight: bold">sizeof</span>(<span style="color: #333399; font-weight: bold">float</span>) <span style="color: #333333">*</span> filterWidth <span style="color: #333333">*</span> filterWidth,
+               cudaMemcpyHostToDevice
+               )
+         );
+}
+
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">your_gaussian_blur</span>(<span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">uchar4</span> <span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> h_inputImageRGBA, <span style="color: #333399; font-weight: bold">uchar4</span> <span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> d_inputImageRGBA,
+                        <span style="color: #333399; font-weight: bold">uchar4</span><span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">const</span> d_outputImageRGBA, <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">size_t</span> numRows, <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">size_t</span> numCols,
+                        <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> <span style="color: #333333">*</span>d_redBlurred,
+                        <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> <span style="color: #333333">*</span>d_greenBlurred,
+                        <span style="color: #333399; font-weight: bold">unsigned</span> <span style="color: #333399; font-weight: bold">char</span> <span style="color: #333333">*</span>d_blueBlurred,
+                        <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">int</span> filterWidth)
+{
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">dim3</span> blockSize(<span style="color: #0000DD; font-weight: bold">16</span>, <span style="color: #0000DD; font-weight: bold">16</span>);
+
+  <span style="color: #888888">//Compute grid size (i.e., number of blocks per kernel launch)</span>
+  <span style="color: #888888">//from the image size and and block size.</span>
+  <span style="color: #008800; font-weight: bold">const</span> <span style="color: #333399; font-weight: bold">dim3</span> gridSize((numCols <span style="color: #333333">+</span> blockSize.x <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">/</span>blockSize.x,
+                      (numRows <span style="color: #333333">+</span> blockSize.y <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">/</span>blockSize.y);
+
+  <span style="color: #888888">//TODO: Launch a kernel for separating the RGBA image into different color channels</span>
+  separateChannels<span style="color: #333333">&lt;&lt;&lt;</span>gridSize, blockSize<span style="color: #333333">&gt;&gt;&gt;</span>(d_inputImageRGBA,
+                      numRows,
+                      numCols,
+                      d_red,
+                      d_green,
+                      d_blue);
+
+  <span style="color: #888888">// Call cudaDeviceSynchronize(), then call checkCudaErrors() immediately after</span>
+  <span style="color: #888888">// launching your kernel to make sure that you didn&#39;t make any mistakes.</span>
+  cudaDeviceSynchronize(); checkCudaErrors(cudaGetLastError());
+
+  <span style="color: #888888">//call convolution kernel here 3 times, once for each color channel.</span>
+  gaussian_blur<span style="color: #333333">&lt;&lt;&lt;</span>gridSize, blockSize<span style="color: #333333">&gt;&gt;&gt;</span>(d_red,
+                     d_redBlurred,
+                     numRows,
+                     numCols,
+                     d_filter,
+                     filterWidth);
+  gaussian_blur<span style="color: #333333">&lt;&lt;&lt;</span>gridSize, blockSize<span style="color: #333333">&gt;&gt;&gt;</span>(d_green,
+                     d_greenBlurred,
+                     numRows,
+                     numCols,
+                     d_filter,
+                     filterWidth);
+  gaussian_blur<span style="color: #333333">&lt;&lt;&lt;</span>gridSize, blockSize<span style="color: #333333">&gt;&gt;&gt;</span>(d_blue,
+                     d_blueBlurred,
+                     numRows,
+                     numCols,
+                     d_filter,
+                     filterWidth);
+
+  cudaDeviceSynchronize(); checkCudaErrors(cudaGetLastError());
+
+  <span style="color: #888888">// Now recombine results. We take care of launching this kernel for you.</span>
+  recombineChannels<span style="color: #333333">&lt;&lt;&lt;</span>gridSize, blockSize<span style="color: #333333">&gt;&gt;&gt;</span>(d_redBlurred,
+                                             d_greenBlurred,
+                                             d_blueBlurred,
+                                             d_outputImageRGBA,
+                                             numRows,
+                                             numCols);
+  cudaDeviceSynchronize(); checkCudaErrors(cudaGetLastError());
+}
+
+<span style="color: #888888">//Free all the memory allocated</span>
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">cleanup</span>() {
+  checkCudaErrors(cudaFree(d_red));
+  checkCudaErrors(cudaFree(d_green));
+  checkCudaErrors(cudaFree(d_blue));
+
+  checkCudaErrors(cudaFree(d_filter));
+}
+</pre></div>
+
+</br>
+
+<img src="images/unit2.jpg" alt="timing and result" />
+
+			</p>
+			<br/><br/>
+			<p align=left>Page under construction (2015/8/31).</p>
+			<!-- <p align=left>Link to some code maybe</p>
+			<a href=""><p align=left><strong>Link</strong></a><br/>
+
+				<hr />
+
+				<img src="" alt="code snippet" />
+				<p><strong>Explanation</strong></p>
+
+				<hr />
+
+				<img src="" alt="code snippet" />
+				<p><strong>Explanation</strong></p> -->
+			</div>
+
+			<hr />
+
+			<div id="detailViewBack">
+				<a href="../../index.html">&laquo; Back</a>
+			</div>
+
+		</div>
+
+		<!-- Footer begins ========================================================================== -->
+		<footer class="sixteen columns">
+			<hr />
+			<ul id="footerLinks">
+				<li>&copy; 2015 Brady Ledger. All rights reserved.</li>
+				<li><a href="mailto:bledger@acm.org">bledger@acm.org</a></li>
+				<li><a href="http://www.twitter.com/hejbrady" target="_blank">Twitter</a></li>
+				<!--Notice: The "Powered by Type & Grids" link in the footer is required in the Free version. Upgrade to the Pro version if you would like to remove it. (www.typeandgrids.me/pirates) -->
+				<li>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a></li>
+			</ul>
+		</footer>
+		<!-- Footer ends ============================================================================ -->
+
+	</div><!-- container -->
+</body>
+</html>
