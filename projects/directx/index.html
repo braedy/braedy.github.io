@@ -108,6 +108,7 @@ www.typeandgrids.com
 			<li align=left>2D graphic rendering</li>
 			<li align=left>Text rendering</li>
 			<li align=left>Frustum culling</li>
+			<li align=left>Multitexture rendering</li>
 			</ul>
 			 </p>
 
@@ -115,13 +116,16 @@ www.typeandgrids.com
 			<a href="http://github.com/braedy/directx-personal" target="_blank"><p align=left>View current project on GitHub</a><br/>
 			<br/>
 			<p align=left>More to follow.</p>
-<!-- 			<hr />
- -->
-			<!-- <img src="images/frustumcull.gif" alt="Rabbit rendered with tweakable Phong shading" />
-			<p><strong>Rabbit rendered with tweakable Blinn-Phong shading</strong></p>
-			<p align=left>Computing Blinn-Phong shading in GLSL vertex and fragment shaders with dynamic variables (configurable through an AntTweakBar).</p>
+			<hr />
 
-			<p><strong></strong></p>
+			<img src="images/multitex.jpg" alt="Multitexture blending." />
+			<p><strong>Blending multiple textures</strong></p>
+			<p align=left>Rendering multiple textures requires a texture array to be passed to the shader, where it is subsequently blended 
+			(with an added gamma value). Textures are loaded with a bespoke handler.
+			<br/><br/>The above image is a blend of a pebble texture and a water surface texture.
+			</p>
+
+			<!-- <p><strong></strong></p>
 
 			<hr />
 
@@ -138,7 +142,7 @@ www.typeandgrids.com
 			<p align=left>Standard mapping produces perfectly smooth, mirror-like surfaces.
 			Pre-filtering the cube map with a smoothing filter based on the specular power of the Blinn-Phong shading model
 			simulates roughness or gloss to the surface. Switching between the filters has been implemented via assigned keys.</p>
-
+ -->
 
 		</div>
 
@@ -148,7 +152,7 @@ www.typeandgrids.com
 			<a href="../../index.html">&laquo; Back</a>
 		</div>
 
-	</div> -->
+	</div>
 
 <!-- Footer begins ========================================================================== -->
 <footer class="sixteen columns">
