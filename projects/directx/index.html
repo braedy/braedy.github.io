@@ -78,7 +78,10 @@ www.typeandgrids.com
 		<div id="detailViewImages">
 
 		<img src="images/frustumcull.gif" alt="Culling the view frustum" />
-			<p><strong>Culling the view frustum</strong></p>
+			<p><strong>Culling the view frustum</strong><br/>
+			Models are rendered only when incident with the view frustum. Models escaping the
+			view frustum are discarded. This removes inefficient rendering, which can become expensive
+			if the scene has for example 5000 models where only 30 are viewable at a given time.</p>
 		
 		<!-- 	<video id="frustumCull" preload controls>
 				<source src="images/frustumcull.mp4" />
@@ -109,6 +112,7 @@ www.typeandgrids.com
 			<li align=left>Text rendering</li>
 			<li align=left>Frustum culling</li>
 			<li align=left>Multitexture rendering</li>
+			<li align=left>Projective texturing</li>
 			</ul>
 			 </p>
 
@@ -125,16 +129,17 @@ www.typeandgrids.com
 			<br/><br/>The above image is a blend of a pebble texture and a water surface texture.
 			</p>
 
-			<!-- <p><strong></strong></p>
+			<p><strong></strong></p>
 
 			<hr />
 
-			<img src="images/church.png" alt="Gargoyle rendered with environmental shading" />
-			<p><strong>Gargoyle rendered with environmental shading</strong></p>
-			<p align=left>To render a reflective/refractive surface required compution of the reflection vector in the fragment shader.
-			This was used as a 3D texture co-ordinate to fetch the incoming light (RGB colour) from the skybox cube map.</p>
+			<img src="images/projTex1.jpg" alt="Projected texture rendering from a viewpoint" />
+			<p><strong>Projected texture rendered onto 3D scene from viewpoint</strong></p>
+			<p align=left>A frustum is created from the viewpoint where the texture is to be projected. Where the frustum intersects a 3D object
+			we draw a pixel from the projected texture that matches the projected location.</p>
+			<img src="images/projTex2.jpg" alt="Projected texture rendering from a viewpoint" />
 
-
+<!-- 
 			<hr />
 
 			<img src="images/forest.png" alt="Armadillo rendered with environmental shading" />
@@ -142,8 +147,8 @@ www.typeandgrids.com
 			<p align=left>Standard mapping produces perfectly smooth, mirror-like surfaces.
 			Pre-filtering the cube map with a smoothing filter based on the specular power of the Blinn-Phong shading model
 			simulates roughness or gloss to the surface. Switching between the filters has been implemented via assigned keys.</p>
- -->
 
+ -->
 		</div>
 
 		<hr />
